@@ -1,0 +1,54 @@
+from typing import List
+from DataObjects.Indent import Indent
+from prepFile import prepFile
+
+def parse1(path: List[str]) -> List[Indent]: 
+    """this converts the array of commands 
+    into a sequence of Indents"""
+    out = []
+    data = prepFile(path)
+    print(data)
+    if len(data) == 0:
+        return []
+
+    #last indent
+    last_ind = 0
+    last = Indent(data[0])
+    print(123, last, data[0])
+    stack = [out] 
+    #stack is a list of pointers to lists
+    #we will use it to choose where to add
+    #our newly created Indent object
+
+    for d in data:
+        ind, dat = _ind(d)
+        #indentation level
+
+        if ind < last_ind:      # <
+            stack.pop()
+        elif ind == last_ind:   # =
+            pass
+        else:                   # >
+            stack.append(last.contents)
+
+        last_ind = ind
+        last = Indent(data)
+        stack[-1].append(last)
+
+        
+        print("|", ind)
+
+
+    return out
+
+
+
+
+
+def _ind(text):
+    i = 0
+    
+    while text[0] == ' ':
+        text = text[1:]
+        i += 1
+    return i, text
